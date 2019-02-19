@@ -21,6 +21,7 @@
 
 import bpy
 import traceback
+from bpy.props import EnumProperty, StringProperty, BoolVectorProperty
 from .icon_list import icons
 
 bl_info = {
@@ -43,8 +44,12 @@ class YAID_PT_display_icons(bpy.types.Panel):
         scn = context.scene
         layout = self.layout
         row = layout.row(align=True)
+        row.prop(scn, "icon_filter", text='')
+        row = layout.row(align=True)
         i = 0
         for icon in icons:
+            if scn.icon_filter.upper() not in icon.upper():
+                continue
             if i > 4:
                 row = layout.row(align=True)
                 i = 0
@@ -53,6 +58,11 @@ class YAID_PT_display_icons(bpy.types.Panel):
 
 def register():
     bpy.utils.register_class(YAID_PT_display_icons)
+    bpy.types.Scene.icon_filter= StringProperty(
+        name="Icon Filter",
+        subtype='FILE_NAME',
+        default="",
+        description='Filter icons on that string')
 
 def unregister():
     bpy.utils.unregister_class(YAID_PT_display_icons)
